@@ -24,6 +24,16 @@
         }, 3000);
     }
 
+
+    // =========================================================
+    // LECTOR DE REDIRECCIONES PHP (Compras exitosas, errores)
+    // =========================================================
+    const flash = document.getElementById('flash-message');
+    if (flash) {
+        mostrarToast(flash.getAttribute('data-mensaje'), flash.getAttribute('data-tipo'));
+    }
+
+
     // ---------------------------------------------------------------
     // 1. Manejo del botón "Add to Cart"
     // ---------------------------------------------------------------

@@ -256,7 +256,16 @@ require_once __DIR__ . '/../app/config/conexion.php';
     </footer>
 <!-- Contenedor ÚNICO en el lugar correcto -->
     <div id="toast-container" class="toast-container"></div>
-
+<?php if (isset($_SESSION['toast_mensaje'])): ?>
+        <div id="flash-message" 
+             data-mensaje="<?php echo htmlspecialchars($_SESSION['toast_mensaje']); ?>" 
+             data-tipo="<?php echo htmlspecialchars($_SESSION['toast_tipo']); ?>" 
+             style="display:none;"></div>
+        <?php 
+            unset($_SESSION['toast_mensaje']);
+            unset($_SESSION['toast_tipo']);
+        ?>
+    <?php endif; ?>
     <!-- Script ÚNICO apuntando a la nueva versión -->
     <script src="js/main.js?v=3"></script>
 </body>

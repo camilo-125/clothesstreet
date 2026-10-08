@@ -175,7 +175,14 @@ try {
 } catch (Exception $e) {
     // Captura del error al intentar cargar los datos para pagar
     error_log("Error crítico BD en procesar_compra_directa.php (Preparación): " . $e->getMessage());
-    echo "<script>alert('Error al cargar la información de la compra. Por favor, intenta de nuevo.'); window.location.href = 'index.php';</script>";
-    exit;
+// EN LUGAR DE ESTO:
+        // echo "<script>alert('¡Pago simulado con éxito! Pedido generado por $" . number_format($total, 0, ',', '.') . " COP'); window.location.href = 'index.php';</script>";
+        // exit;
+
+        // PON ESTO:
+        $_SESSION['toast_mensaje'] = "¡Pago simulado con éxito! Pedido por $" . number_format($total, 0, ',', '.') . " COP";
+        $_SESSION['toast_tipo'] = "success";
+        header('Location: ../../public/index.php'); 
+        exit;
 }
 ?>
