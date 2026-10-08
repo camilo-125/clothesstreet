@@ -167,4 +167,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. BUSCADOR DE index.php
     // ---------------------------------------------------------------
     document.querySelectorAll('.lupa').forEach((lupa) => {
-        if (lupa.tagName
+        if (lupa.tagName === 'FORM') return;
+
+        const input = lupa.querySelector('input[type="text"], input:not([type])');
+        const boton = lupa.querySelector('button');
+        if (!input) return;
+
+        const irABuscar = () => {
+            const q = input.value.trim();
+            const destino = 'catalogo.php' + (q ? ('?busqueda=' + encodeURIComponent(q)) : '');
+            window.location.href = destino;
+        };
+
+        if (boton) boton.addEventListener('click', irABuscar);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') irABuscar();
+        });
+    });
+
+});
