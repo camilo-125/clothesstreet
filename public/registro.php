@@ -63,5 +63,26 @@ require_once __DIR__ . '/../app/views/user/registro.php';
 
         <p style="margin-top: 15px;">¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a></p>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const formsAuth = document.querySelectorAll('.form-auth');
+            
+            formsAuth.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const btnSubmit = this.querySelector('.btn-auth');
+                    
+                    if (btnSubmit) {
+                        // 1. Deshabilitar el botón para evitar doble clic
+                        btnSubmit.disabled = true;
+                        
+                        // 2. Dar retroalimentación visual al usuario
+                        btnSubmit.textContent = 'PROCESANDO...';
+                        btnSubmit.style.opacity = '0.7';
+                        btnSubmit.style.cursor = 'wait';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
