@@ -1,7 +1,7 @@
 <?php
 // procesar_compra_directa.php
 session_start();
-require_once __DIR__ . '/../app/config/conexion.php'; // Ajusta la ruta si es necesario
+require_once __DIR__ . '/../../app/config/conexion.php'; // Ajusta la ruta si es necesario
 
 // 1. Validar que el usuario esté logueado
 if (!isset($_SESSION['id_usuario'])) {
