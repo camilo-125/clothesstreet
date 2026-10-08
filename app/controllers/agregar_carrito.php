@@ -1,7 +1,9 @@
 <?php
 session_start();
+// Aseguramos la ruta correcta a la conexión de base de datos
 require_once __DIR__ . '/../config/conexion.php';
 
+// Forzamos a que PHP siempre responda en formato JSON para que el JS lo lea sin errores
 header('Content-Type: application/json');
 
 // 1. Verificar si el usuario está autenticado
@@ -92,7 +94,7 @@ try {
     // 1. Guardamos el error crítico de forma silenciosa en el servidor para depuración
     error_log("Error crítico BD en agregar_carrito.php: " . $e->getMessage());
 
-    // 2. Respondemos a JavaScript con un mensaje seguro (Sin exponer datos de tablas o columnas)
+    // 2. Respondemos a JavaScript con un mensaje seguro (Sin exponer datos de tablas)
     echo json_encode([
         'status' => 'error',
         'message' => 'Ocurrió un problema interno al procesar tu solicitud. Por favor, intenta de nuevo.'
