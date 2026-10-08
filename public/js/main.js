@@ -1,11 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
-
-    // =========================================================
+// =========================================================
     // FUNCIÓN TOAST (Reemplazo de alert() - ISO/IEC 25000)
     // =========================================================
     function mostrarToast(mensaje, tipo = 'success') {
-        const container = document.getElementById('toast-container');
-        if (!container) return; // Si no está el contenedor en el HTML, no hace nada
+        let container = document.getElementById('toast-container');
+        
+        // ¡NUEVO!: Si el contenedor no existe en el HTML, JS lo crea automáticamente
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
 
         const toast = document.createElement('div');
         toast.className = `toast ${tipo}`;
@@ -172,4 +177,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-});
