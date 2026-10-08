@@ -39,7 +39,7 @@
             formData.append('id_producto', idProducto);
             formData.append('accion', 'agregar');
 
-            fetch('agregar_carrito.php', {
+            fetch('../app/controllers/agregar_carrito.php', {
                 method: 'POST',
                 body: formData
             })

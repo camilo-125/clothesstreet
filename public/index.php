@@ -10,7 +10,7 @@ require_once __DIR__ . '/../app/config/conexion.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>clothesstreet</title>
-    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="stylesheet" href="css/style.css?v=3">
     <div id="toast-container" class="toast-container"></div>
 
     <!-- ARCHIVO JAVASCRIPT CON ANTI-CACHÉ -->
@@ -254,9 +254,10 @@ require_once __DIR__ . '/../app/config/conexion.php';
             </div>
         </div>
     </footer>
+<!-- Contenedor ÚNICO en el lugar correcto -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- ARCHIVO JAVASCRIPT -->
-    <script src="js/main.js"></script>
+    <!-- Script ÚNICO apuntando a la nueva versión -->
+    <script src="js/main.js?v=3"></script>
 </body>
 </html>
