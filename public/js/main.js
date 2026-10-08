@@ -97,7 +97,7 @@
             const formData = new FormData();
             formData.append('id_producto', idProducto);
 
-            fetch('agregar_favorito.php', {
+            fetch('../app/controllers/agregar_favorito.php', {
                 method: 'POST',
                 body: formData
             })
