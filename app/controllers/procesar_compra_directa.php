@@ -1,7 +1,7 @@
 <?php
-// app/controllers/procesar_compra_directa.php
+// procesar_compra_directa.php
 session_start();
-require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../app/config/conexion.php'; // Ajusta la ruta si es necesario
 
 // 1. Validar que el usuario esté logueado
 if (!isset($_SESSION['id_usuario'])) {
@@ -65,7 +65,9 @@ if (isset($_POST['confirmar_pago'])) {
             $item = mysqli_fetch_assoc($r_stk);
 
             if (!$item || $cantidad > $item['stock_disponible']) {
-                echo "<script>alert('Error: La cantidad supera el stock disponible.'); window.location.href='index.php';</script>";
+                $_SESSION['toast_mensaje'] = "Error: La cantidad supera el stock disponible.";
+                $_SESSION['toast_tipo'] = "error";
+                header('Location: index.php');
                 exit;
             }
 
@@ -98,7 +100,9 @@ if (isset($_POST['confirmar_pago'])) {
 
             while ($row = mysqli_fetch_assoc($res_cart)) {
                 if ($row['cantidad'] > $row['stock_disponible']) {
-                    echo "<script>alert('Error: Un producto en tu carrito supera el stock.'); window.location.href='carrito.php';</script>";
+                    $_SESSION['toast_mensaje'] = "Error: Un producto en tu carrito supera el stock.";
+                    $_SESSION['toast_tipo'] = "error";
+                    header('Location: carrito.php');
                     exit;
                 }
                 $total += ($row['precio'] * $row['cantidad']);
@@ -123,13 +127,20 @@ if (isset($_POST['confirmar_pago'])) {
             }
         }
 
-        echo "<script>alert('¡Pago simulado con éxito! Pedido generado por $" . number_format($total, 0, ',', '.') . " COP'); window.location.href = 'index.php';</script>";
+        // =====================================================
+        // AQUÍ ESTÁ EL CAMBIO CORRECTO: Redirección con sesión
+        // =====================================================
+        $_SESSION['toast_mensaje'] = "¡Pago simulado con éxito! Pedido por $" . number_format($total, 0, ',', '.') . " COP";
+        $_SESSION['toast_tipo'] = "success";
+        header('Location: index.php'); 
         exit;
 
     } catch (Exception $e) {
         // Captura del error crítico de pago
         error_log("Error crítico BD en procesar_compra_directa.php (Guardado): " . $e->getMessage());
-        echo "<script>alert('Ocurrió un error interno al procesar tu pago. No te preocupes, no se han realizado cargos. Intenta de nuevo.'); window.location.href = 'index.php';</script>";
+        $_SESSION['toast_mensaje'] = "Ocurrió un error interno al procesar tu pago. Intenta de nuevo.";
+        $_SESSION['toast_tipo'] = "error";
+        header('Location: index.php');
         exit;
     }
 }
@@ -173,16 +184,11 @@ try {
         }
     }
 } catch (Exception $e) {
-    // Captura del error al intentar cargar los datos para pagar
+    // RESTAURADO EL CATCH ORIGINAL
     error_log("Error crítico BD en procesar_compra_directa.php (Preparación): " . $e->getMessage());
-// EN LUGAR DE ESTO:
-        // echo "<script>alert('¡Pago simulado con éxito! Pedido generado por $" . number_format($total, 0, ',', '.') . " COP'); window.location.href = 'index.php';</script>";
-        // exit;
-
-        // PON ESTO:
-        $_SESSION['toast_mensaje'] = "¡Pago simulado con éxito! Pedido por $" . number_format($total, 0, ',', '.') . " COP";
-        $_SESSION['toast_tipo'] = "success";
-        header('Location: ../../public/index.php'); 
-        exit;
+    $_SESSION['toast_mensaje'] = "Error al cargar la información de la compra.";
+    $_SESSION['toast_tipo'] = "error";
+    header('Location: index.php'); 
+    exit;
 }
 ?>
