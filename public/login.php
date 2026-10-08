@@ -1,4 +1,18 @@
 <?php
+
+/**
+ * Vista y Controlador de Inicio de Sesión
+ *
+ * Este script maneja la autenticación de usuarios en el e-commerce.
+ * Renderiza el formulario visual y procesa las credenciales a través
+ * del controlador de login, manejando tokens CSRF para evitar ataques.
+ *
+ * @package    ClothesStreet
+ * @subpackage Auth
+ * @author     [Tu Nombre o "Equipo de Desarrollo"]
+ * @version    1.1.0
+ * @since      2026-10-08
+ */
 // 1. Ejecuta toda la lógica secreta del backend que acabas de crear
 require_once __DIR__ . '/../app/views/user/logincontroller.php'; 
 ?>
@@ -72,21 +86,3 @@ require_once __DIR__ . '/../app/views/user/logincontroller.php';
 </body>
 </html>
 
-/**
- * Controlador de Procesamiento de Compras Directas
- *
- * Este script maneja la lógica central de transacciones del e-commerce.
- * Recibe peticiones POST, verifica la seguridad (CSRF), valida la 
- * disponibilidad del inventario y registra el pedido finalizando la compra.
- * Implementa control de excepciones (Try/Catch) según IEEE 730.
- *
- * @package    ClothesStreet
- * @subpackage Controllers
- * @author     [Tu Nombre o "Equipo de Desarrollo"]
- * @version    1.1.0
- * @since      2026-10-08
- *
- * @uses       $_SESSION Para validar autenticación de usuario y tokens CSRF.
- * @uses       $_POST Para recuperar datos del carrito o compra directa.
- * @throws     Exception Si ocurre un error crítico de base de datos durante la transacción.
- **/
