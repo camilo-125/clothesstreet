@@ -10,7 +10,11 @@ require_once __DIR__ . '/../app/config/conexion.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>clothesstreet</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ARCHIVO JAVASCRIPT CON ANTI-CACHÉ -->
+    <script src="js/main.js?v=2"></script>
 </head>
 <body>
     <div class="ticker">    
