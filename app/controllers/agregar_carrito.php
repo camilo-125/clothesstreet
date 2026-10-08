@@ -24,58 +24,78 @@ if ($id_producto <= 0) {
     exit;
 }
 
-// 2. Consultar disponibilidad en la tabla inventario
-$query_inventario = "SELECT id_inventario FROM inventario WHERE id_producto = $id_producto AND stock_disponible > 0 LIMIT 1";
-$res_inventario = mysqli_query($conexion, $query_inventario);
+// =====================================================================
+// APLICACIÓN IEEE 730 / MODS: Iniciamos el control de errores (try)
+// =====================================================================
+try {
+    // 2. Consultar disponibilidad en la tabla inventario
+    $query_inventario = "SELECT id_inventario FROM inventario WHERE id_producto = $id_producto AND stock_disponible > 0 LIMIT 1";
+    $res_inventario = mysqli_query($conexion, $query_inventario);
 
-if (!$res_inventario || mysqli_num_rows($res_inventario) === 0) {
+    if (!$res_inventario || mysqli_num_rows($res_inventario) === 0) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Producto sin stock'
+        ]);
+        exit;
+    }
+
+    $inventario = mysqli_fetch_assoc($res_inventario);
+    $id_inventario = $inventario['id_inventario'];
+
+    // 3. Buscar o crear el carrito activo del usuario
+    $query_carrito = "SELECT id_carrito FROM carrito WHERE id_usuario = $id_usuario";
+    $res_carrito = mysqli_query($conexion, $query_carrito);
+
+    if ($res_carrito && mysqli_num_rows($res_carrito) > 0) {
+        $carrito = mysqli_fetch_assoc($res_carrito);
+        $id_carrito = $carrito['id_carrito'];
+    } else {
+        $insert_carrito = "INSERT INTO carrito (id_usuario) VALUES ($id_usuario)";
+        mysqli_query($conexion, $insert_carrito);
+        $id_carrito = mysqli_insert_id($conexion);
+    }
+
+    // 4. Agregar o actualizar la cantidad en item_carrito
+    $query_item = "SELECT id_item_carrito, cantidad FROM item_carrito WHERE id_carrito = $id_carrito AND id_inventario = $id_inventario";
+    $res_item = mysqli_query($conexion, $query_item);
+
+    if ($res_item && mysqli_num_rows($res_item) > 0) {
+        $item = mysqli_fetch_assoc($res_item);
+        $nueva_cantidad = $item['cantidad'] + 1;
+        $id_item = $item['id_item_carrito'];
+        
+        $update_item = "UPDATE item_carrito SET cantidad = $nueva_cantidad WHERE id_item_carrito = $id_item";
+        mysqli_query($conexion, $update_item);
+    } else {
+        $insert_item = "INSERT INTO item_carrito (cantidad, id_carrito, id_inventario) VALUES (1, $id_carrito, $id_inventario)";
+        mysqli_query($conexion, $insert_item);
+    }
+
+    // 5. Calcular total de prendas registradas para responder a JavaScript
+    $query_total = "SELECT SUM(cantidad) AS total FROM item_carrito WHERE id_carrito = $id_carrito";
+    $res_total = mysqli_query($conexion, $query_total);
+    $data_total = mysqli_fetch_assoc($res_total);
+    $total_items = $data_total['total'] ? intval($data_total['total']) : 0;
+
+    // Si todo sale bien, respondemos el éxito
+    echo json_encode([
+        'status' => 'success',
+        'total_items' => $total_items
+    ]);
+
+} catch (Exception $e) {
+    // =====================================================================
+    // CAPTURA DEL ERROR (catch): Protegemos el sistema y al usuario
+    // =====================================================================
+    
+    // 1. Guardamos el error crítico de forma silenciosa en el servidor para depuración
+    error_log("Error crítico BD en agregar_carrito.php: " . $e->getMessage());
+
+    // 2. Respondemos a JavaScript con un mensaje seguro (Sin exponer datos de tablas o columnas)
     echo json_encode([
         'status' => 'error',
-        'message' => 'Producto sin stock'
+        'message' => 'Ocurrió un problema interno al procesar tu solicitud. Por favor, intenta de nuevo.'
     ]);
-    exit;
 }
-
-$inventario = mysqli_fetch_assoc($res_inventario);
-$id_inventario = $inventario['id_inventario'];
-
-// 3. Buscar o crear el carrito activo del usuario
-$query_carrito = "SELECT id_carrito FROM carrito WHERE id_usuario = $id_usuario";
-$res_carrito = mysqli_query($conexion, $query_carrito);
-
-if ($res_carrito && mysqli_num_rows($res_carrito) > 0) {
-    $carrito = mysqli_fetch_assoc($res_carrito);
-    $id_carrito = $carrito['id_carrito'];
-} else {
-    $insert_carrito = "INSERT INTO carrito (id_usuario) VALUES ($id_usuario)";
-    mysqli_query($conexion, $insert_carrito);
-    $id_carrito = mysqli_insert_id($conexion);
-}
-
-// 4. Agregar o actualizar la cantidad en item_carrito
-$query_item = "SELECT id_item_carrito, cantidad FROM item_carrito WHERE id_carrito = $id_carrito AND id_inventario = $id_inventario";
-$res_item = mysqli_query($conexion, $query_item);
-
-if ($res_item && mysqli_num_rows($res_item) > 0) {
-    $item = mysqli_fetch_assoc($res_item);
-    $nueva_cantidad = $item['cantidad'] + 1;
-    $id_item = $item['id_item_carrito'];
-    
-    $update_item = "UPDATE item_carrito SET cantidad = $nueva_cantidad WHERE id_item_carrito = $id_item";
-    mysqli_query($conexion, $update_item);
-} else {
-    $insert_item = "INSERT INTO item_carrito (cantidad, id_carrito, id_inventario) VALUES (1, $id_carrito, $id_inventario)";
-    mysqli_query($conexion, $insert_item);
-}
-
-// 5. Calcular total de prendas registradas para responder a JavaScript
-$query_total = "SELECT SUM(cantidad) AS total FROM item_carrito WHERE id_carrito = $id_carrito";
-$res_total = mysqli_query($conexion, $query_total);
-$data_total = mysqli_fetch_assoc($res_total);
-$total_items = $data_total['total'] ? intval($data_total['total']) : 0;
-
-echo json_encode([
-    'status' => 'success',
-    'total_items' => $total_items
-]);
 ?>
