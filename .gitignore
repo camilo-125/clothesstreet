@@ -1,0 +1,11 @@
+# 1. Configuraciones del editor local
+.vscode/
+
+# 2. Archivos con credenciales sensibles
+app/config/conexion.php
+
+# 3. Archivos de registro de errores (logs)
+*.log
+
+# 4. Ignorar las fotos de los productos subidos por el administrador
+public/img/
