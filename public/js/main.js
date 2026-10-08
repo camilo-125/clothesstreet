@@ -1,10 +1,12 @@
-// =========================================================
+document.addEventListener('DOMContentLoaded', () => {
+
+    // =========================================================
     // FUNCIÓN TOAST (Reemplazo de alert() - ISO/IEC 25000)
     // =========================================================
     function mostrarToast(mensaje, tipo = 'success') {
         let container = document.getElementById('toast-container');
         
-        // ¡NUEVO!: Si el contenedor no existe en el HTML, JS lo crea automáticamente
+        // Si el contenedor no existe en el HTML, JS lo crea automáticamente
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
@@ -24,7 +26,6 @@
         }, 3000);
     }
 
-
     // =========================================================
     // LECTOR DE REDIRECCIONES PHP (Compras exitosas, errores)
     // =========================================================
@@ -32,7 +33,6 @@
     if (flash) {
         mostrarToast(flash.getAttribute('data-mensaje'), flash.getAttribute('data-tipo'));
     }
-
 
     // ---------------------------------------------------------------
     // 1. Manejo del botón "Add to Cart"
@@ -49,7 +49,8 @@
             formData.append('id_producto', idProducto);
             formData.append('accion', 'agregar');
 
-            fetch('../app/controllers/agregar_carrito.php', {
+            // URL RESTAURADA: Apunta a tu archivo local
+            fetch('agregar_carrito.php', {
                 method: 'POST',
                 body: formData
             })
@@ -76,13 +77,10 @@
                     }, 1200);
 
                 } else if (data.status === 'auth_required') {
-                    // Reemplazo del alert()
                     mostrarToast('Debes iniciar sesión para comprar', 'warning');
-                    // Esperamos 1.5 seg antes de redirigir para que el usuario lea el mensaje
                     setTimeout(() => { window.location.href = 'login.php'; }, 1500);
 
                 } else if (data.status === 'error') {
-                    // Atrapa los errores del bloque try...catch de backend
                     mostrarToast(data.message, 'error');
                 }
             })
@@ -107,14 +105,14 @@
             const formData = new FormData();
             formData.append('id_producto', idProducto);
 
-            fetch('../app/controllers/agregar_favorito.php', {
+            // URL RESTAURADA: Apunta a tu archivo local
+            fetch('agregar_favorito.php', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'auth_required') {
-                    // Reemplazo del alert()
                     mostrarToast('Debes iniciar sesión para guardar favoritos', 'warning');
                     setTimeout(() => { window.location.href = 'login.php'; }, 1500);
                     
@@ -169,21 +167,4 @@
     // 4. BUSCADOR DE index.php
     // ---------------------------------------------------------------
     document.querySelectorAll('.lupa').forEach((lupa) => {
-        if (lupa.tagName === 'FORM') return;
-
-        const input = lupa.querySelector('input[type="text"], input:not([type])');
-        const boton = lupa.querySelector('button');
-        if (!input) return;
-
-        const irABuscar = () => {
-            const q = input.value.trim();
-            const destino = 'catalogo.php' + (q ? ('?busqueda=' + encodeURIComponent(q)) : '');
-            window.location.href = destino;
-        };
-
-        if (boton) boton.addEventListener('click', irABuscar);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') irABuscar();
-        });
-    });
-
+        if (lupa.tagName
