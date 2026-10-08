@@ -57,6 +57,10 @@ require_once __DIR__ . '/../app/views/user/registro.php';
                 <label>Dirección de Envío</label><br>
                 <input type="text" name="direccion" class="input-auth">
             </div>
+            <div class="field" style="font-size: 11px; color: #666; margin-bottom: 15px;">
+    <input type="checkbox" required id="terminos">
+    <label for="terminos" style="display:inline;">Acepto la <a href="politica_privacidad.php" target="_blank">Política de Privacidad</a> y el tratamiento de mis datos personales.</label>
+    </div>
 
             <button type="submit" class="btn-auth">REGISTRARME</button>
         </form>
