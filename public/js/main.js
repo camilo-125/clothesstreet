@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function mostrarToast(mensaje, tipo = 'success') {
         let container = document.getElementById('toast-container');
         
-        // Si el contenedor no existe en el HTML, JS lo crea automáticamente
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
@@ -20,14 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.appendChild(toast);
 
-        // Se autodestruye del HTML después de 3 segundos
         setTimeout(() => {
             toast.remove();
         }, 3000);
     }
 
     // =========================================================
-    // LECTOR DE REDIRECCIONES PHP (Compras exitosas, errores)
+    // LECTOR DE REDIRECCIONES PHP
     // =========================================================
     const flash = document.getElementById('flash-message');
     if (flash) {
@@ -49,21 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('id_producto', idProducto);
             formData.append('accion', 'agregar');
 
-            // URL RESTAURADA: Apunta a tu archivo local
             fetch('agregar_carrito.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Error en la red');
+                return res.json(); // Si el PHP tiene un espacio en blanco, fallará aquí
+            })
             .then(data => {
                 if (data.status === 'success') {
-                    // Actualizar contador
                     if (contadorCarrito) contadorCarrito.textContent = data.total_items;
                     
-                    // Notificación de éxito
                     mostrarToast('Producto agregado al carrito', 'success');
 
-                    // Feedback visual en el botón
                     const textoBoton = boton.querySelector('span:last-child');
                     const textoOriginal = textoBoton.textContent;
                     textoBoton.textContent = 'ADDED!';
@@ -86,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => {
                 console.error('Error al agregar al carrito:', error);
+                // Si el JSON falla o hay error de PHP, muestra este toast:
                 mostrarToast('Error de conexión con el servidor', 'error');
             });
         });
@@ -105,12 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('id_producto', idProducto);
 
-            // URL RESTAURADA: Apunta a tu archivo local
             fetch('agregar_favorito.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Error en la red');
+                return res.json();
+            })
             .then(data => {
                 if (data.status === 'auth_required') {
                     mostrarToast('Debes iniciar sesión para guardar favoritos', 'warning');
