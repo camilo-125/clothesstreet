@@ -250,6 +250,7 @@ require_once __DIR__ . '/../app/config/conexion.php';
             </div>
         </div>
     </footer>
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- ARCHIVO JAVASCRIPT -->
     <script src="js/main.js"></script>

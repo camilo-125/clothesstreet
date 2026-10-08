@@ -1,15 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // =========================================================
+    // FUNCIÓN TOAST (Reemplazo de alert() - ISO/IEC 25000)
+    // =========================================================
+    function mostrarToast(mensaje, tipo = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return; // Si no está el contenedor en el HTML, no hace nada
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${tipo}`;
+        toast.textContent = mensaje;
+
+        container.appendChild(toast);
+
+        // Se autodestruye del HTML después de 3 segundos
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    // ---------------------------------------------------------------
     // 1. Manejo del botón "Add to Cart"
+    // ---------------------------------------------------------------
     const botonesCarrito = document.querySelectorAll('.agre-carrito');
     const contadorCarrito = document.querySelector('.cart-contador');
 
     botonesCarrito.forEach(boton => {
         boton.addEventListener('click', (e) => {
-            // Obtener el ID del producto desde el atributo data-id
+            e.preventDefault();
             const idProducto = boton.getAttribute('data-id');
             
-            // Enviar los datos mediante fetch a PHP
             const formData = new FormData();
             formData.append('id_producto', idProducto);
             formData.append('accion', 'agregar');
@@ -21,12 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Actualizar el contador en el header
-                    if (contadorCarrito) {
-                        contadorCarrito.textContent = data.total_items;
-                    }
+                    // Actualizar contador
+                    if (contadorCarrito) contadorCarrito.textContent = data.total_items;
                     
-                    // Feedback visual breve en el botón
+                    // Notificación de éxito
+                    mostrarToast('Producto agregado al carrito', 'success');
+
+                    // Feedback visual en el botón
                     const textoBoton = boton.querySelector('span:last-child');
                     const textoOriginal = textoBoton.textContent;
                     textoBoton.textContent = 'ADDED!';
@@ -40,53 +61,68 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 1200);
 
                 } else if (data.status === 'auth_required') {
-                    alert('Debes iniciar sesión para agregar productos al carrito.');
-                    window.location.href = 'login.php';
+                    // Reemplazo del alert()
+                    mostrarToast('Debes iniciar sesión para comprar', 'warning');
+                    // Esperamos 1.5 seg antes de redirigir para que el usuario lea el mensaje
+                    setTimeout(() => { window.location.href = 'login.php'; }, 1500);
+
+                } else if (data.status === 'error') {
+                    // Atrapa los errores del bloque try...catch de backend
+                    mostrarToast(data.message, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error al agregar al carrito:', error);
+                mostrarToast('Error de conexión con el servidor', 'error');
             });
         });
     });
 
-  // Manejo del botón "Add to Favorites" con conexión a Base de Datos
-const botonesFavoritos = document.querySelectorAll('.agre-favorito');
+    // ---------------------------------------------------------------
+    // 2. Manejo del botón "Add to Favorites"
+    // ---------------------------------------------------------------
+    const botonesFavoritos = document.querySelectorAll('.agre-favorito');
 
-botonesFavoritos.forEach(boton => {
-    boton.addEventListener('click', () => {
-        const idProducto = boton.getAttribute('data-id');
-        const corazon = boton.querySelector('span:first-child');
+    botonesFavoritos.forEach(boton => {
+        boton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const idProducto = boton.getAttribute('data-id');
+            const corazon = boton.querySelector('span:first-child');
 
-        // FormData para enviar por AJAX
-        const formData = new FormData();
-        formData.append('id_producto', idProducto);
+            const formData = new FormData();
+            formData.append('id_producto', idProducto);
 
-        fetch('agregar_favorito.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'auth_required') {
-                alert(data.message);
-                window.location.href = 'login.php';
-            } else if (data.action === 'added') {
-                corazon.textContent = '♥';
-                corazon.style.color = 'red';
-            } else if (data.action === 'removed') {
-                corazon.textContent = '♡';
-                corazon.style.color = '';
-            }
-        })
-        .catch(error => console.error('Error al actualizar favoritos:', error));
+            fetch('agregar_favorito.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'auth_required') {
+                    // Reemplazo del alert()
+                    mostrarToast('Debes iniciar sesión para guardar favoritos', 'warning');
+                    setTimeout(() => { window.location.href = 'login.php'; }, 1500);
+                    
+                } else if (data.action === 'added') {
+                    corazon.textContent = '♥';
+                    corazon.style.color = 'red';
+                    mostrarToast('Agregado a favoritos', 'success');
+
+                } else if (data.action === 'removed') {
+                    corazon.textContent = '♡';
+                    corazon.style.color = '';
+                    mostrarToast('Eliminado de favoritos', 'success');
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar favoritos:', error);
+                mostrarToast('Error al procesar favoritos', 'error');
+            });
+        });
     });
-});
 
     // ---------------------------------------------------------------
     // 3. MEGA MENÚ — soporte para tap en pantallas táctiles
-    //    (con mouse/hover ya funciona solo con CSS; esto es para
-    //    celulares y tablets, donde no existe el "hover")
     // ---------------------------------------------------------------
     const itemsConMegaMenu = document.querySelectorAll('.has-megamenu');
 
@@ -99,7 +135,6 @@ botonesFavoritos.forEach(boton => {
             if (!esTouch) return;
 
             const yaEstaAbierto = item.classList.contains('open');
-
             itemsConMegaMenu.forEach((otro) => otro.classList.remove('open'));
 
             if (!yaEstaAbierto) {
@@ -117,11 +152,9 @@ botonesFavoritos.forEach(boton => {
 
     // ---------------------------------------------------------------
     // 4. BUSCADOR DE index.php
-    //    Ahí ".lupa" es un <div> (no un <form> como en catalogo.php
-    //    y nosotros.php), así que el botón/Enter no hacían nada.
     // ---------------------------------------------------------------
     document.querySelectorAll('.lupa').forEach((lupa) => {
-        if (lupa.tagName === 'FORM') return; // ya funciona solo, es un form real
+        if (lupa.tagName === 'FORM') return;
 
         const input = lupa.querySelector('input[type="text"], input:not([type])');
         const boton = lupa.querySelector('button');
