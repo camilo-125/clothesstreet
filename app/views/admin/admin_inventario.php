@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../app/middleware/admin_middleware.php';
-require_once __DIR__ . '/../../app/config/conexion.php';
+require_once __DIR__ . '/../../Middleware/admin_middleware.php';
+require_once __DIR__ . '/../../Config/conexion.php';
 $mensaje = '';
 
 // ELIMINAR PRODUCTO (DESACTIVAR)
