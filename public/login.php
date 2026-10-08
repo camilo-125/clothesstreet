@@ -89,4 +89,4 @@ require_once __DIR__ . '/../app/views/user/logincontroller.php';
  * @uses       $_SESSION Para validar autenticación de usuario y tokens CSRF.
  * @uses       $_POST Para recuperar datos del carrito o compra directa.
  * @throws     Exception Si ocurre un error crítico de base de datos durante la transacción.
- */
+ **/
