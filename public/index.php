@@ -270,3 +270,21 @@ require_once __DIR__ . '/../app/config/conexion.php';
     <script src="js/main.js?v=3"></script>
 </body>
 </html>
+/**
+ * Controlador de Procesamiento de Compras Directas
+ *
+ * Este script maneja la lógica central de transacciones del e-commerce.
+ * Recibe peticiones POST, verifica la seguridad (CSRF), valida la 
+ * disponibilidad del inventario y registra el pedido finalizando la compra.
+ * Implementa control de excepciones (Try/Catch) según IEEE 730.
+ *
+ * @package    ClothesStreet
+ * @subpackage Controllers
+ * @author     [Tu Nombre o "Equipo de Desarrollo"]
+ * @version    1.1.0
+ * @since      2026-10-08
+ *
+ * @uses       $_SESSION Para validar autenticación de usuario y tokens CSRF.
+ * @uses       $_POST Para recuperar datos del carrito o compra directa.
+ * @throws     Exception Si ocurre un error crítico de base de datos durante la transacción.
+ */
