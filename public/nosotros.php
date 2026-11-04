@@ -13,7 +13,8 @@ require_once __DIR__ . '/../app/config/conexion.php';
 </head>
 <body>
     <header class="header-items">
-        <div class="logo">CLOTHES<span>STREET</span></div>
+        <div class="logo"><a href="index.php" style="text-decoration: none; color: inherit;">CLOTHES<span>STREET</span></a>
+</div>
         
         <nav class="nav-items">
             <ul class="main-nav">
