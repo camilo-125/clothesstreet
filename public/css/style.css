@@ -92,7 +92,9 @@ img{max-width:100%; display:block;}
   background:var(--negro) !important;
   border-bottom:1px solid var(--linea);
   position:relative;
-  z-index:200;
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Asegura que quede por encima de las imágenes */
   flex-wrap:wrap;
 }
 
