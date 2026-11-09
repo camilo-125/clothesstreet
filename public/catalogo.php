@@ -19,6 +19,8 @@
  */
 // Conectamos la vista con el controlador para que existan las variables $resultado, $busqueda, etc.
 require_once __DIR__ . '/../app/views/user/catalogo.php'; 
+require_once __DIR__ . '/../app/config/conexion.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -37,13 +39,12 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
         .productos-card h2 { font-size: 16px; margin: 12px 0 6px; }
         .productos-card p { font-weight: bold; font-size: 15px; margin-bottom: 12px; }
         .acciones-card { display: flex; gap: 8px; justify-content: center; }
-        .acciones-card button { padding: 8px 12px; border: 1px solid #000; background: #none; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .acciones-card button { padding: 8px 12px; border: 1px solid #000; background: none; cursor: pointer; font-size: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
     <header class="header-items">
-        <div class="logo"><a href="index.php" style="text-decoration: none; color: inherit;">CLOTHES<span>STREET</span></a>
-</div>
+        <div class="logo"><a href="index.php" style="text-decoration: none; color: inherit;">CLOTHES<span>STREET</span></a></div>
         
         <nav class="nav-items">
             <ul class="main-nav">
@@ -102,7 +103,7 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
         </nav>
 
         <form action="catalogo.php" method="GET" class="lupa">
-            <input type="text" name="busqueda" value="<?php echo htmlspecialchars($busqueda); ?>" placeholder="Buscar...">
+            <input type="text" name="busqueda" value="<?php echo htmlspecialchars($busqueda ?? ''); ?>" placeholder="Buscar...">
             <button type="submit">🔍</button>
         </form>
 
@@ -117,7 +118,11 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
             <a href="favoritos.php" style="text-decoration: none;">
                 <button type="button" style="background: none; border: 1px solid #000; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer;">♡ Favoritos</button>
             </a>
-            <a href="carrito.php"><button class="cart">🛒 <span class="cart-contador">0</span></button></a>
+           <a href="carrito.php" style="text-decoration: none; color: inherit;">
+    <button class="cart" style="cursor: pointer;">
+        🛒 <span class="cart-contador"><?php echo $cantidad_carrito ?? 0; ?></span>
+    </button>
+</a>
         </div>
     </header>
 
@@ -141,8 +146,17 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
         </div>
 
         <section class="grid-productos">
-            <?php if ($resultado && mysqli_num_rows($resultado) > 0): ?>
+            <?php if (isset($resultado) && mysqli_num_rows($resultado) > 0): ?>
                 <?php while ($prod = mysqli_fetch_assoc($resultado)): ?>
+                    <?php 
+                        // COMPROBAR SI ESTE PRODUCTO ESTÁ EN EL ARRAY DE FAVORITOS
+                        $es_favorito = in_array($prod['id_producto'], $favoritos_usuario);
+                        $clase_btn = $es_favorito ? 'agre-favorito favorito-activo' : 'agre-favorito';
+                        
+                        // Si es favorito, muestra el corazón relleno (♥) y en rojo. Si no, corazón hueco (♡) sin color en línea.
+                        $icono = $es_favorito ? '♥' : '♡';
+                        $estilo_color = $es_favorito ? 'color: red;' : '';
+                    ?>
                     <article class="productos-card">
                         <a href="detalle_producto.php?id=<?php echo $prod['id_producto']; ?>" style="text-decoration: none; color: inherit;">
                             <img src="<?php echo htmlspecialchars($prod['imagen']); ?>" alt="<?php echo htmlspecialchars($prod['nombre']); ?>">
@@ -151,8 +165,8 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
                         <p>$<?php echo number_format($prod['precio'], 0, ',', '.'); ?> COP</p>
 
                         <div class="acciones-card">
-                            <button class="agre-favorito" data-id="<?php echo $prod['id_producto']; ?>">
-                                <span>♡</span> Favorito
+                            <button class="<?php echo $clase_btn; ?>" data-id="<?php echo $prod['id_producto']; ?>">
+                                <span class="icono-corazon" style="<?php echo $estilo_color; ?>"><?php echo $icono; ?></span> Favorito
                             </button>
                             <a href="detalle_producto.php?id=<?php echo $prod['id_producto']; ?>">
                                 <button style="background: #000; color: #fff;">Ver Detalle</button>

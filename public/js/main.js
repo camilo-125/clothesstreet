@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('id_producto', idProducto);
             formData.append('accion', 'agregar');
 
-            fetch('agregar_carrito.php', {
+
+            fetch('../app/controllers/agregar_carrito.php', {
                 method: 'POST',
                 body: formData
             })
@@ -103,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('id_producto', idProducto);
 
-            fetch('agregar_favorito.php', {
+            // CÁMBIALO A ESTO:
+            fetch('../app/controllers/agregar_favorito.php', {
                 method: 'POST',
                 body: formData
             })
