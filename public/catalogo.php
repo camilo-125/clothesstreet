@@ -1,26 +1,15 @@
 <?php
-/**
- * Controlador de Procesamiento de Compras Directas
- *
- * Este script maneja la lógica central de transacciones del e-commerce.
- * Recibe peticiones POST, verifica la seguridad (CSRF), valida la 
- * disponibilidad del inventario y registra el pedido finalizando la compra.
- * Implementa control de excepciones (Try/Catch) según IEEE 730.
- *
- * @package    ClothesStreet
- * @subpackage Controllers
- * @author     [Tu Nombre o "Equipo de Desarrollo"]
- * @version    1.1.0
- * @since      2026-10-08
- *
- * @uses       $_SESSION Para validar autenticación de usuario y tokens CSRF.
- * @uses       $_POST Para recuperar datos del carrito o compra directa.
- * @throws     Exception Si ocurre un error crítico de base de datos durante la transacción.
- */
-// Conectamos la vista con el controlador para que existan las variables $resultado, $busqueda, etc.
-require_once __DIR__ . '/../app/views/user/catalogo.php'; 
-require_once __DIR__ . '/../app/config/conexion.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// 1. PRIMERO: Cargamos la conexión a la Base de Datos
+require_once __DIR__ . '/../app/config/conexion.php'; 
 
+// 2. SEGUNDO: Cargamos el backend global (Favoritos y Carrito)
+require_once __DIR__ . '/../app/controllers/obtener_catalogo.php'; 
+
+// 3. TERCERO: Cargamos el backend exclusivo de esta página (Productos)
+require_once __DIR__ . '/../app/views/user/catalogo.php'; 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,8 +37,14 @@ require_once __DIR__ . '/../app/config/conexion.php';
         
         <nav class="nav-items">
             <ul class="main-nav">
+                <!-- BOTÓN DE REGRESAR ROBUSTO -->
+                <li>
+                    <a href="<?php echo isset($_SESSION['ultima_pagina']) ? htmlspecialchars($_SESSION['ultima_pagina']) : 'index.php'; ?>" style="cursor: pointer; color: #ff3366; font-weight: bold;">
+                        ← Volver
+                    </a>
+                </li>
+                
                 <li><a href="catalogo.php">Ver Todo</a></li>
-                <!-- MEGA MENÚ MEN'S -->
                 <li class="has-megamenu">
                     <a href="catalogo.php?genero=Hombre" class="nav-link">Men's ▾</a>
                     <div class="megamenu">
@@ -74,7 +69,6 @@ require_once __DIR__ . '/../app/config/conexion.php';
                     </div>
                 </li>
 
-                <!-- MEGA MENÚ WOMEN'S -->
                 <li class="has-megamenu">
                     <a href="catalogo.php?genero=Mujer" class="nav-link">Women's ▾</a>
                     <div class="megamenu">
@@ -106,7 +100,7 @@ require_once __DIR__ . '/../app/config/conexion.php';
             <input type="text" name="busqueda" value="<?php echo htmlspecialchars($busqueda ?? ''); ?>" placeholder="Buscar...">
             <button type="submit">🔍</button>
         </form>
-
+        
         <div class="cuenta">
             <?php if (isset($_SESSION['id_usuario'])): ?>
                 <span class="user">Hola, <?php echo htmlspecialchars($_SESSION['nombre_usuario']); ?></span>
@@ -118,11 +112,11 @@ require_once __DIR__ . '/../app/config/conexion.php';
             <a href="favoritos.php" style="text-decoration: none;">
                 <button type="button" style="background: none; border: 1px solid #000; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer;">♡ Favoritos</button>
             </a>
-           <a href="carrito.php" style="text-decoration: none; color: inherit;">
-    <button class="cart" style="cursor: pointer;">
-        🛒 <span class="cart-contador"><?php echo $cantidad_carrito ?? 0; ?></span>
-    </button>
-</a>
+            <a href="carrito.php" style="text-decoration: none; color: inherit;">
+                <button class="cart" style="cursor: pointer;">
+                    🛒 <span class="cart-contador"><?php echo (isset($cantidad_carrito) && $cantidad_carrito > 9) ? '+9' : ($cantidad_carrito ?? 0); ?></span>
+                </button>
+            </a>
         </div>
     </header>
 
@@ -147,30 +141,38 @@ require_once __DIR__ . '/../app/config/conexion.php';
 
         <section class="grid-productos">
             <?php if (isset($resultado) && mysqli_num_rows($resultado) > 0): ?>
-                <?php while ($prod = mysqli_fetch_assoc($resultado)): ?>
+                <?php while ($producto = mysqli_fetch_assoc($resultado)): ?>
                     <?php 
-                        // COMPROBAR SI ESTE PRODUCTO ESTÁ EN EL ARRAY DE FAVORITOS
-                        $es_favorito = in_array($prod['id_producto'], $favoritos_usuario);
+                        $es_favorito = in_array($producto['id_producto'], $favoritos_usuario ?? []);
                         $clase_btn = $es_favorito ? 'agre-favorito favorito-activo' : 'agre-favorito';
-                        
-                        // Si es favorito, muestra el corazón relleno (♥) y en rojo. Si no, corazón hueco (♡) sin color en línea.
                         $icono = $es_favorito ? '♥' : '♡';
                         $estilo_color = $es_favorito ? 'color: red;' : '';
                     ?>
                     <article class="productos-card">
-                        <a href="detalle_producto.php?id=<?php echo $prod['id_producto']; ?>" style="text-decoration: none; color: inherit;">
-                            <img src="<?php echo htmlspecialchars($prod['imagen']); ?>" alt="<?php echo htmlspecialchars($prod['nombre']); ?>">
-                            <h2><?php echo htmlspecialchars($prod['nombre']); ?></h2>
+                        
+                        <a href="detalle_producto.php?id=<?php echo $producto['id_producto']; ?>" style="text-decoration: none; color: inherit;">
+                            <h2><?php echo htmlspecialchars($producto['nombre']); ?></h2>
+                            <img src="<?php echo htmlspecialchars($producto['imagen']); ?>" alt="<?php echo htmlspecialchars($producto['nombre']); ?>">  
                         </a>
-                        <p>$<?php echo number_format($prod['precio'], 0, ',', '.'); ?> COP</p>
-
-                        <div class="acciones-card">
-                            <button class="<?php echo $clase_btn; ?>" data-id="<?php echo $prod['id_producto']; ?>">
-                                <span class="icono-corazon" style="<?php echo $estilo_color; ?>"><?php echo $icono; ?></span> Favorito
+                        
+                        <p>$<?php echo number_format($producto['precio'], 0, ',', '.'); ?> COP</p>
+                        
+                        <div class="acciones-card" style="flex-direction: column;">
+                            
+                            <!-- BOTÓN FAVORITO IDÉNTICO AL INDEX -->
+                            <button class="<?php echo $clase_btn; ?>" data-id="<?php echo $producto['id_producto']; ?>">
+                                <span class="icono-corazon" style="<?php echo $estilo_color; ?>"><?php echo $icono; ?></span><span>add to favorites</span>
                             </button>
-                            <a href="detalle_producto.php?id=<?php echo $prod['id_producto']; ?>">
-                                <button style="background: #000; color: #fff;">Ver Detalle</button>
-                            </a>
+
+                            <button onclick="window.location.href='detalle_producto.php?id=<?php echo $producto['id_producto']; ?>'">
+                                Ver Detalle
+                            </button>
+                            
+                            <!-- BOTÓN CARRITO IDÉNTICO AL INDEX -->
+                            <button class="agre-carrito" data-id="<?php echo $producto['id_producto']; ?>">
+                                <span>🛒</span><span>add to cart</span>
+                            </button>
+                            
                         </div>
                     </article>
                 <?php endwhile; ?>
@@ -179,7 +181,21 @@ require_once __DIR__ . '/../app/config/conexion.php';
             <?php endif; ?>
         </section>
     </main>
+    
+    <div id="toast-container" class="toast-container"></div>
+    
+    <!-- ¡ESTE ES EL BLOQUE QUE FALTABA Y HACÍA COLAPSAR TU JAVASCRIPT! -->
+    <?php if (isset($_SESSION['toast_mensaje'])): ?>
+        <div id="flash-message" 
+            data-mensaje="<?php echo htmlspecialchars($_SESSION['toast_mensaje']); ?>" 
+            data-tipo="<?php echo htmlspecialchars($_SESSION['toast_tipo']); ?>" 
+            style="display:none;"></div>
+        <?php 
+            unset($_SESSION['toast_mensaje']);
+            unset($_SESSION['toast_tipo']);
+        ?>
+    <?php endif; ?>
 
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=4"></script>
 </body>
 </html>

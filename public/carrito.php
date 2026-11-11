@@ -15,9 +15,14 @@ require_once __DIR__ . '/../app/views/user/carrito.php';
 <body>
     <header class="header-items">
         <div class="logo"><a href="index.php" style="text-decoration: none; color: inherit;">CLOTHES<span>STREET</span></a>
-</div>
+
+    </div>
+    
+
+        
         <nav class="nav-items">
             <ul>
+                <li><a href="javascript:history.back()" style="cursor: pointer; color: #ff3366; font-weight: bold;"> Volver</a></li>
                 <li><a href="index.php">Inicio</a></li>
                 <li><a href="catalogo.php">Catálogo</a></li>
             </ul>

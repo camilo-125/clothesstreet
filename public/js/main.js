@@ -50,15 +50,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             fetch('../app/controllers/agregar_carrito.php', {
                 method: 'POST',
-                body: formData
+                
+                if (contadorCarrito) {
+                    const total = parseInt(data.total_items) || 0;
+                    contadorCarrito.textContent = total > 9 ? '+9' : total;
+                }
+                
+                
+
             })
+            
             .then(res => {
                 if (!res.ok) throw new Error('Error en la red');
                 return res.json(); // Si el PHP tiene un espacio en blanco, fallará aquí
             })
             .then(data => {
-                if (data.status === 'success') {
-                    if (contadorCarrito) contadorCarrito.textContent = data.total_items;
+               if (data.status === 'success') {
+                    
+                    // ==========================================
+                    // REGLA DEL +9 PARA EL JAVASCRIPT
+                    // ==========================================
+                    if (contadorCarrito) {
+                        const total = parseInt(data.total_items) || 0;
+                        contadorCarrito.textContent = total > 9 ? '+9' : total;
+                    }
                     
                     mostrarToast('Producto agregado al carrito', 'success');
 

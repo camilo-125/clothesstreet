@@ -112,12 +112,11 @@ require_once __DIR__ . '/../app/controllers/obtener_catalogo.php';
             </button>
             </a>
 
-            <a href="carrito.php" style="text-decoration: none; color: inherit;">
-                <button class="cart" style="cursor: pointer;">
-                    <!-- AQUÍ IMPRIMIMOS EL VALOR REAL DE LA BASE DE DATOS -->
-                    🛒 <span class="cart-contador"><?php echo $cantidad_carrito; ?></span>
-                </button>
-            </a>
+        <a href="carrito.php" style="text-decoration: none; color: inherit;">
+            <button class="cart" style="cursor: pointer;">
+                🛒 <span class="cart-contador"><?php echo (isset($cantidad_carrito) && $cantidad_carrito > 9) ? '+9' : ($cantidad_carrito ?? 0); ?></span>
+            </button>
+        </a>
         </div>
     </header> 
     
@@ -282,14 +281,15 @@ require_once __DIR__ . '/../app/controllers/obtener_catalogo.php';
     
     <?php if (isset($_SESSION['toast_mensaje'])): ?>
         <div id="flash-message" 
-             data-mensaje="<?php echo htmlspecialchars($_SESSION['toast_mensaje']); ?>" 
-             data-tipo="<?php echo htmlspecialchars($_SESSION['toast_tipo']); ?>" 
-             style="display:none;"></div>
+            data-mensaje="<?php echo htmlspecialchars($_SESSION['toast_mensaje']); ?>" 
+            data-tipo="<?php echo htmlspecialchars($_SESSION['toast_tipo']); ?>" 
+            style="display:none;"></div>
         <?php 
             unset($_SESSION['toast_mensaje']);
             unset($_SESSION['toast_tipo']);
         ?>
     <?php endif; ?>
     <script src="js/main.js?v=4"></script>
+    
 </body>
 </html>

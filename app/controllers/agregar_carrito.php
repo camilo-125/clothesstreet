@@ -74,16 +74,29 @@ try {
         mysqli_query($conexion, $insert_item);
     }
 
-    // 5. Calcular total de prendas registradas para responder a JavaScript
-    $query_total = "SELECT SUM(cantidad) AS total FROM item_carrito WHERE id_carrito = $id_carrito";
-    $res_total = mysqli_query($conexion, $query_total);
-    $data_total = mysqli_fetch_assoc($res_total);
-    $total_items = $data_total['total'] ? intval($data_total['total']) : 0;
+    // 5. Calcular total de prendas registradas con JOIN para enviar a JS
+    $total_actualizado = 0;
+    $query_recount = "
+        SELECT SUM(ic.cantidad) as total_items 
+        FROM item_carrito ic
+        INNER JOIN carrito c ON ic.id_carrito = c.id_carrito
+        WHERE c.id_usuario = ?";
 
-    // Si todo sale bien, respondemos el éxito
+    if ($stmt_recount = mysqli_prepare($conexion, $query_recount)) {
+        mysqli_stmt_bind_param($stmt_recount, "i", $id_usuario);
+        mysqli_stmt_execute($stmt_recount);
+        $res_recount = mysqli_stmt_get_result($stmt_recount);
+        if ($row = mysqli_fetch_assoc($res_recount)) {
+            $total_actualizado = $row['total_items'] ? (int)$row['total_items'] : 0;
+        }
+        mysqli_stmt_close($stmt_recount);
+    }
+
+    // ÚNICA respuesta JSON permitida para evitar que el JS colapse
     echo json_encode([
-        'status' => 'success',
-        'total_items' => $total_items
+        'status' => 'success', 
+        'message' => 'Agregado al carrito',
+        'total_items' => $total_actualizado
     ]);
 
 } catch (Exception $e) {
@@ -94,7 +107,7 @@ try {
     // 1. Guardamos el error crítico de forma silenciosa en el servidor para depuración
     error_log("Error crítico BD en agregar_carrito.php: " . $e->getMessage());
 
-    // 2. Respondemos a JavaScript con un mensaje seguro (Sin exponer datos de tablas)
+    // 2. Respondemos a JavaScript con un mensaje seguro
     echo json_encode([
         'status' => 'error',
         'message' => 'Ocurrió un problema interno al procesar tu solicitud. Por favor, intenta de nuevo.'
