@@ -26,11 +26,4 @@ if (!empty($busqueda)) {
 
 $sql .= " ORDER BY id_producto DESC";
 $resultado = mysqli_query($conexion, $sql);
-
-// Guardar la página actual para que el botón "Volver" sepa a dónde regresar
-if (isset($_SERVER['REQUEST_URI'])) {
-    if (strpos($_SERVER['REQUEST_URI'], 'favoritos.php') === false && strpos($_SERVER['REQUEST_URI'], 'carrito.php') === false) {
-        $_SESSION['ultima_pagina'] = $_SERVER['REQUEST_URI'];
-    }
-}
 ?>

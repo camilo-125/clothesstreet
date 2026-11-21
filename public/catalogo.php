@@ -38,12 +38,11 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
         <nav class="nav-items">
             <ul class="main-nav">
                 <!-- BOTÓN DE REGRESAR ROBUSTO -->
-                <li>
-                    <a href="<?php echo isset($_SESSION['ultima_pagina']) ? htmlspecialchars($_SESSION['ultima_pagina']) : 'index.php'; ?>" style="cursor: pointer; color: #ff3366; font-weight: bold;">
-                        ← Volver
-                    </a>
-                </li>
-                
+            <li>
+                <a href="#" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = 'catalogo.php'; } return false;" style="cursor: pointer; color: #ff3366; font-weight: bold;">
+                     Volver
+                </a>
+            </li>
                 <li><a href="catalogo.php">Ver Todo</a></li>
                 <li class="has-megamenu">
                     <a href="catalogo.php?genero=Hombre" class="nav-link">Men's ▾</a>
@@ -196,6 +195,6 @@ require_once __DIR__ . '/../app/views/user/catalogo.php';
         ?>
     <?php endif; ?>
 
-    <script src="js/main.js?v=4"></script>
+   <script src="js/main.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

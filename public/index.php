@@ -289,7 +289,7 @@ require_once __DIR__ . '/../app/controllers/obtener_catalogo.php';
             unset($_SESSION['toast_tipo']);
         ?>
     <?php endif; ?>
-    <script src="js/main.js?v=4"></script>
-    
+   <script src="js/main.js?v=<?php echo time(); ?>"></script>
+   
 </body>
 </html>

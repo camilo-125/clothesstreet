@@ -47,29 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('id_producto', idProducto);
             formData.append('accion', 'agregar');
 
-
             fetch('../app/controllers/agregar_carrito.php', {
                 method: 'POST',
-                
-                if (contadorCarrito) {
-                    const total = parseInt(data.total_items) || 0;
-                    contadorCarrito.textContent = total > 9 ? '+9' : total;
-                }
-                
-                
-
+                body: formData
             })
-            
             .then(res => {
                 if (!res.ok) throw new Error('Error en la red');
-                return res.json(); // Si el PHP tiene un espacio en blanco, fallará aquí
+                return res.json();
             })
             .then(data => {
-               if (data.status === 'success') {
-                    
-                    // ==========================================
-                    // REGLA DEL +9 PARA EL JAVASCRIPT
-                    // ==========================================
+                if (data.status === 'success') {
+                    // Regla del +9
                     if (contadorCarrito) {
                         const total = parseInt(data.total_items) || 0;
                         contadorCarrito.textContent = total > 9 ? '+9' : total;
@@ -78,16 +66,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     mostrarToast('Producto agregado al carrito', 'success');
 
                     const textoBoton = boton.querySelector('span:last-child');
-                    const textoOriginal = textoBoton.textContent;
-                    textoBoton.textContent = 'ADDED!';
-                    boton.style.backgroundColor = '#111';
-                    boton.style.color = '#fff';
+                    if (textoBoton) {
+                        const textoOriginal = textoBoton.textContent;
+                        textoBoton.textContent = 'ADDED!';
+                        boton.style.backgroundColor = '#111';
+                        boton.style.color = '#fff';
 
-                    setTimeout(() => {
-                        textoBoton.textContent = textoOriginal;
-                        boton.style.backgroundColor = '';
-                        boton.style.color = '';
-                    }, 1200);
+                        setTimeout(() => {
+                            textoBoton.textContent = textoOriginal;
+                            boton.style.backgroundColor = '';
+                            boton.style.color = '';
+                        }, 1200);
+                    }
 
                 } else if (data.status === 'auth_required') {
                     mostrarToast('Debes iniciar sesión para comprar', 'warning');
@@ -99,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => {
                 console.error('Error al agregar al carrito:', error);
-                // Si el JSON falla o hay error de PHP, muestra este toast:
                 mostrarToast('Error de conexión con el servidor', 'error');
             });
         });
@@ -119,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('id_producto', idProducto);
 
-            // CÁMBIALO A ESTO:
             fetch('../app/controllers/agregar_favorito.php', {
                 method: 'POST',
                 body: formData
@@ -134,13 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => { window.location.href = 'login.php'; }, 1500);
                     
                 } else if (data.action === 'added') {
-                    corazon.textContent = '♥';
-                    corazon.style.color = 'red';
+                    if (corazon) {
+                        corazon.textContent = '♥';
+                        corazon.style.color = 'red';
+                    }
                     mostrarToast('Agregado a favoritos', 'success');
 
                 } else if (data.action === 'removed') {
-                    corazon.textContent = '♡';
-                    corazon.style.color = '';
+                    if (corazon) {
+                        corazon.textContent = '♡';
+                        corazon.style.color = '';
+                    }
                     mostrarToast('Eliminado de favoritos', 'success');
                 }
             })
