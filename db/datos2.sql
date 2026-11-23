@@ -7,9 +7,9 @@ USE clothesstreet_db;
 INSERT INTO producto (nombre, categoria, genero, precio, descripcion, imagen) VALUES 
 -- HOMBRE
 ('Camiseta Oversize Heavy Cotton', 'Camisetas', 'Hombre', 110000.00, 'Camiseta negra pesada corte boxy fit.', 'img/top.png'),
-('Hoodie Midnight Black', 'Hoodies', 'Hombre', 180000.00, 'Hoodie de algodón afelpado con capucha gruesa.', 'img/hoodie.png'),
-('Chaqueta Leather Street', 'Chaquetas', 'Hombre', 290000.00, 'Chaqueta de sintético con bordado frontal.', 'img/bomber.png'),
-('Pantalón Cargo Tactical Black', 'Pantalones', 'Hombre', 210000.00, 'Pantalón cargo con bolsillos laterales y ajustador.', 'img/cargo.png'),
+('Hoodie Midnight Black', 'Hoodies', 'Hombre', 180000.00, 'Hoodie de algodón afelpado con capucha gruesa.', 'img/hoodie_hombre.png'),
+('Chaqueta Leather Street', 'Chaquetas', 'Hombre', 290000.00, 'Chaqueta de sintético con bordado frontal.', 'img/cuero.png'),
+('Pantalón Cargo Tactical Black', 'Pantalones', 'Hombre', 210000.00, 'Pantalón cargo con bolsillos laterales y ajustador.', 'img/cargo_hombre.png'),
 ('Bermuda Denim Street', 'Bermudas', 'Hombre', 135000.00, 'Bermuda en jean rígido lavada.', 'img/bermuda.png'),
 ('Sweatpants Heavy Grey', 'Sweatpants', 'Hombre', 160000.00, 'Sudadera gris en algodón perchado.', 'img/sweatpants.png'),
 
@@ -23,7 +23,7 @@ INSERT INTO producto (nombre, categoria, genero, precio, descripcion, imagen) VA
 ('Gorra Snapback Calle 5', 'Accesorios', 'Unisex', 95000.00, 'Gorra con visera plana y bordado frontal.', 'img/gorra.png'),
 ('Pack Medias High Socks x3', 'Medias', 'Unisex', 45000.00, 'Pack de 3 pares de medias con logo bordado.', 'img/medias.png'),
 ('Chest Rig Utility Bag', 'Bolsos', 'Unisex', 120000.00, 'Bolso pechera táctico impermeable.', 'img/chestrig.png'),
-('Camiseta Vintage Acid Wash', 'Camisetas', 'Unisex', 115000.00, 'Camiseta lavada efecto desgastado.', 'img/top.png'),
+('Camiseta Vintage Acid Wash', 'Camisetas', 'Unisex', 115000.00, 'Camiseta lavada efecto desgastado.', 'img/camiseta.png'),
 ('Hoodie Oversize Essential', 'Hoodies', 'Unisex', 185000.00, 'Hoodie gris básico holgado.', 'img/hoodie.png'),
 ('Chaqueta Rompevientos Street', 'Chaquetas', 'Unisex', 240000.00, 'Chaqueta liviana impermeable.', 'img/bomber.png'),
 ('Pantalón Cargo Wide Leg', 'Pantalones', 'Unisex', 195000.00, 'Pantalón de bota ancha ajuste elástico.', 'img/cargo.png');

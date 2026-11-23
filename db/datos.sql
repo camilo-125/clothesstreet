@@ -12,8 +12,8 @@ INSERT INTO usuario (rol, nombre, correo, contrasena, telefono, direccion_envio)
 -- ============================================================
 INSERT INTO producto (nombre, categoria, genero, precio, descripcion, imagen) VALUES
 ('Hoodie Oversize Medianoche', 'Hoodies', 'Unisex', 180000.00, 'Hoodie de algodón pesado con corte oversize.', 'img/hoodie.png'),
-('Gorra Snapback Calle 5', 'Accesorios', 'Unisex', 95000.00, 'Gorra con visera plana y bordado frontal.', 'img/gorra.png'),
-('Jersey Oversize Heavy Cotton', 'Camisetas', 'Hombre', 120000.00, 'Camiseta estampada corte boxy fit.', 'img/top.png');
+('Gorra Snapback Calle 5', 'Accesorios', 'Unisex', 95000.00, 'Gorra con visera plana y bordado frontal.', 'img/gorra_2.png'),
+('Jersey Oversize Heavy Cotton', 'Camisetas', 'Hombre', 120000.00, 'Camiseta estampada corte boxy fit.', 'img/camiseta_2.png');
 
 
 -- ============================================================
