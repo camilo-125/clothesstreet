@@ -137,7 +137,7 @@ require_once __DIR__ . '/../app/controllers/obtener_catalogo.php';
             <div class="grid-productos">
                 <?php
                 // Consultar los productos en la base de datos
-                $query = "SELECT id_producto, nombre, precio, imagen FROM producto WHERE activo = 1 ORDER BY id_producto DESC LIMIT 3";
+                $query = "SELECT id_producto, nombre, precio, imagen FROM producto WHERE activo = 1 ORDER BY id_producto DESC LIMIT 4";
                 $resultado = mysqli_query($conexion, $query);
 
                 // Escudo protector: Verifica que el resultado no haya fallado
