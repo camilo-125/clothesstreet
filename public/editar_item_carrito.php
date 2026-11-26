@@ -24,9 +24,7 @@ require_once __DIR__ . '/../app/controllers/editar_item_carrito.php';
 <body>
     <header class="header-items">
         <div class="logo">CLOTHES<span>STREET</span></div>
-        <nav class="nav-items">
-            <ul><li><a href="carrito.php">Volver al carrito</a></li></ul>
-        </nav>
+        
     </header>
 
     <main class="detalle-container">
@@ -64,7 +62,9 @@ require_once __DIR__ . '/../app/controllers/editar_item_carrito.php';
                 </div>
 
                 <button type="submit" class="btn-guardar">ACEPTAR Y GUARDAR CAMBIOS</button>
-                <a href="carrito.php" class="btn-cancelar">Cancelar</a>
+                <nav class="nav-items">
+                    <ul><li><a href="<?php echo htmlspecialchars($url_retorno); ?>">cancelar</a></li></ul>
+                </nav>
             </form>
         </div>
     </main>

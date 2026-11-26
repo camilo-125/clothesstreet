@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../config/conexion.php';
 
 if (!isset($_SESSION['id_usuario'])) {
@@ -9,6 +11,17 @@ if (!isset($_SESSION['id_usuario'])) {
 
 $id_usuario = $_SESSION['id_usuario'];
 $error_mensaje = "";
+
+// GUARDAR LA PÁGINA DE ORIGEN AL ENTRAR (GET)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'editar_item_carrito.php') === false) {
+        $_SESSION['url_retorno_edicion'] = $_SERVER['HTTP_REFERER'];
+    } elseif (!isset($_SESSION['url_retorno_edicion'])) {
+        $_SESSION['url_retorno_edicion'] = 'carrito.php';
+    }
+}
+
+$url_retorno = $_SESSION['url_retorno_edicion'] ?? 'carrito.php';
 
 // PROCESAR LA ACTUALIZACIÓN (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_item_carrito'])) {
@@ -37,17 +50,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_item_carrito'])) {
                              SET id_inventario = $id_inventario_nuevo, cantidad = $cantidad_nueva 
                              WHERE id_item_carrito = $id_item_carrito";
             mysqli_query($conexion, $query_update);
-            header('Location: carrito.php');
+
+            unset($_SESSION['url_retorno_edicion']);
+            header('Location: ' . $url_retorno);
             exit;
         }
     }
 }
 
-// CARGAR LA VISTA DE EDICIÓN (GET)
+// CARGAR LA VISTA DE EDICIÓN (GET O SI HUBO ERROR EN POST)
 $id_item_carrito = isset($_GET['id']) ? intval($_GET['id']) : (isset($_POST['id_item_carrito']) ? intval($_POST['id_item_carrito']) : 0);
 
 if ($id_item_carrito <= 0) {
-    header('Location: carrito.php');
+    header('Location: ' . $url_retorno);
     exit;
 }
 
@@ -61,7 +76,7 @@ $query_item = "SELECT ic.id_item_carrito, ic.cantidad, ic.id_inventario, p.id_pr
 $res_item = mysqli_query($conexion, $query_item);
 
 if (!$res_item || mysqli_num_rows($res_item) === 0) {
-    header('Location: carrito.php');
+    header('Location: ' . $url_retorno);
     exit;
 }
 
@@ -79,4 +94,3 @@ while ($row = mysqli_fetch_assoc($res_inv)) {
     $variantes[] = $row;
 }
 ?>
-

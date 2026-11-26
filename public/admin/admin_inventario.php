@@ -10,7 +10,6 @@ require_once __DIR__ . '/../../app/views/admin/admin_inventario.php';
     <title>Inventario — Admin CLOTHESSTREET</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* La barra superior fija que solicitó el cliente */
         body { margin: 0; padding-top: 60px; } 
         
         .admin-nav-bar { 
@@ -24,6 +23,19 @@ require_once __DIR__ . '/../../app/views/admin/admin_inventario.php';
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
         th { background: #000; color: #fff; }
+
+        /* RESALTADO NARANJA PARA STOCK MENOR A 10 EN MODO OSCURO */
+        tr.stock-bajo {
+            background-color: rgba(249, 115, 22, 0.14) !important;
+            border-left: 4px solid #f97316;
+        }
+        tr.stock-bajo td {
+            color: #fff !important;
+            border-color: rgba(249, 115, 22, 0.35);
+        }
+        tr.stock-bajo .precio-compra {
+            color: #bbb !important;
+        }
         
         .msg-error { color: #dc3545; font-weight: bold; background: #f8d7da; padding: 10px; border: 1px solid #f5c6cb; margin-bottom:15px; }
         .msg-exito { color: #155724; font-weight: bold; background: #d4edda; padding: 10px; border: 1px solid #c3e6cb; margin-bottom:15px; }
@@ -61,30 +73,39 @@ require_once __DIR__ . '/../../app/views/admin/admin_inventario.php';
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Imagen</th>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Género</th>
-                    <th>Precio</th>
-                    <th>Stock Total</th>
-                    <th>Acciones</th>
+                    <th>IMAGEN</th>
+                    <th>NOMBRE</th>
+                    <th>CATEGORÍA</th>
+                    <th>GÉNERO</th>
+                    <th>PRECIO DE COMPRA</th>
+                    <th>PRECIO DE VENTA</th>
+                    <th>STOCK TOTAL</th>
+                    <th>ACCIONES</th>
                 </tr>
             </thead>
             <tbody>
                 <?php while ($prod = mysqli_fetch_assoc($res_productos)): ?>
-                    <tr>
+                    <?php $es_stock_bajo = ((int)$prod['stock_total'] < 10); ?>
+                    <tr class="<?php echo $es_stock_bajo ? 'stock-bajo' : ''; ?>">
                         <td>#<?php echo $prod['id_producto']; ?></td>
                         <td><img src="../<?php echo htmlspecialchars($prod['imagen']); ?>" style="width: 40px; height: 40px; object-fit: cover;"></td>
                         <td><?php echo htmlspecialchars($prod['nombre']); ?></td>
                         <td><?php echo htmlspecialchars($prod['categoria']); ?></td>
                         <td><?php echo htmlspecialchars($prod['genero']); ?></td>
-                        <td>$<?php echo number_format($prod['precio'], 0, ',', '.'); ?></td>
-                        <td><strong><?php echo $prod['stock_total']; ?></strong> unids.</td>
+                        <td class="precio-compra" style="color: #aaa;">$<?php echo number_format($prod['precio_compra'] ?? 0, 0, ',', '.'); ?></td>
+                        <td><strong>$<?php echo number_format($prod['precio'], 0, ',', '.'); ?></strong></td>
                         <td>
-                            <!-- Este enlace ahora lleva a la nueva página de creación -->
-                            <a href="admin_crear_producto.php" style="font-weight: bold; color: #4CAF50;">Crear Nuevo</a> | 
-                            <a href="admin_editar_producto.php?id=<?php echo $prod['id_producto']; ?>" style="font-weight: bold; color: #000;">Editar</a> | 
-                            <a href="admin_inventario.php?eliminar_id=<?php echo $prod['id_producto']; ?>" onclick="return confirm('¿Desactivar este producto?');" style="color: red;">Eliminar</a>
+                            <strong style="color: <?php echo $es_stock_bajo ? '#fb923c' : '#fff'; ?>;">
+                                <?php echo $prod['stock_total']; ?> unids.
+                            </strong>
+                            <?php if ($es_stock_bajo): ?>
+                                <small style="display: block; font-weight: bold; color: #f97316; margin-top: 2px;">⚠ Stock bajo</small>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <a href="admin_crear_producto.php" style="font-weight: bold; color: #4ade80;">Crear Nuevo</a> | 
+                            <a href="admin_editar_producto.php?id=<?php echo $prod['id_producto']; ?>" style="font-weight: bold; color: #fff;">Editar</a> | 
+                            <a href="admin_inventario.php?eliminar_id=<?php echo $prod['id_producto']; ?>" onclick="return confirm('¿Desactivar este producto?');" style="color: #f87171; font-weight: bold;">Eliminar</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>

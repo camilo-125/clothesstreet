@@ -72,6 +72,7 @@ try {
     } else {
         $insert_item = "INSERT INTO item_carrito (cantidad, id_carrito, id_inventario) VALUES (1, $id_carrito, $id_inventario)";
         mysqli_query($conexion, $insert_item);
+        $id_item = mysqli_insert_id($conexion); // Capturamos el ID generado
     }
 
     // 5. Calcular total de prendas registradas con JOIN para enviar a JS
@@ -96,7 +97,8 @@ try {
     echo json_encode([
         'status' => 'success', 
         'message' => 'Agregado al carrito',
-        'total_items' => $total_actualizado
+        'total_items' => $total_actualizado,
+        'id_item_carrito' => $id_item
     ]);
 
 } catch (Exception $e) {

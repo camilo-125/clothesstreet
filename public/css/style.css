@@ -1113,6 +1113,19 @@ table a:hover{color:var(--cian) !important;}
     padding: 20px;
 }
 
+/* RESALTADO NARANJA ELEGANTE PARA MODO OSCURO (STOCK < 10) */
+tr.stock-bajo {
+    background-color: rgba(249, 115, 22, 0.14) !important;
+    border-left: 4px solid #f97316;
+}
+tr.stock-bajo td {
+    color: #fff !important;
+    border-color: rgba(249, 115, 22, 0.35);
+}
+tr.stock-bajo .precio-compra {
+    color: #bbb !important;
+}
+
 /* Links de "Editar" que en el PHP admin traen color:#000 inline */
 .productos-card a{color:var(--blanco) !important;}
 .productos-card a:hover{color:var(--magenta) !important;}

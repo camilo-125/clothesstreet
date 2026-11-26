@@ -57,27 +57,27 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 if (data.status === 'success') {
-                    // Regla del +9
+                    // 1. Se mantiene la regla del +9
                     if (contadorCarrito) {
                         const total = parseInt(data.total_items) || 0;
                         contadorCarrito.textContent = total > 9 ? '+9' : total;
                     }
                     
-                    mostrarToast('Producto agregado al carrito', 'success');
+                    // 2. Se mantiene el toast
+                    mostrarToast('Producto agregado, elige tu talla...', 'success');
 
+                    // 3. Se mantiene la animación del botón
                     const textoBoton = boton.querySelector('span:last-child');
                     if (textoBoton) {
-                        const textoOriginal = textoBoton.textContent;
                         textoBoton.textContent = 'ADDED!';
                         boton.style.backgroundColor = '#111';
                         boton.style.color = '#fff';
-
-                        setTimeout(() => {
-                            textoBoton.textContent = textoOriginal;
-                            boton.style.backgroundColor = '';
-                            boton.style.color = '';
-                        }, 1200);
                     }
+
+                    // 4. Redirige a editar talla, color y cantidad
+                    setTimeout(() => {
+                        window.location.href = 'editar_item_carrito.php?id=' + data.id_item_carrito;
+                    }, 600);
 
                 } else if (data.status === 'auth_required') {
                     mostrarToast('Debes iniciar sesión para comprar', 'warning');

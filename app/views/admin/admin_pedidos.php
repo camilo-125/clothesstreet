@@ -32,7 +32,7 @@ $query_p = "SELECT p.*, u.nombre AS cliente, u.correo, u.telefono
                 p.id_pedido DESC";
 $res_pedidos = mysqli_query($conexion, $query_p);
 
-// CONSULTA DE DETALLES DE TODOS LOS PEDIDOS (Productos, tallas, colores y cantidades)
+// CONSULTA DE DETALLES DE TODOS LOS PEDIDOS
 $detalles_pedidos = [];
 $query_detalles = "SELECT ip.id_pedido, ip.cantidad, ip.precio_unitario, 
                           i.talla, i.color, 

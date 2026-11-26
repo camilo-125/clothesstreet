@@ -84,7 +84,7 @@ require_once __DIR__ . '/../app/views/user/carrito.php';
                 </tbody>
             </table>
 
-<!-- REEMPLAZAR ESTO EN CARRITO.PHP -->
+
 <div style="margin-top: 30px; text-align: right;">
     <h3>Total a Pagar: <span style="color: #000;">$<?php echo number_format($total_general, 0, ',', '.'); ?> COP</span></h3>
     
